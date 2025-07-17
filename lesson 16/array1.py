@@ -1,0 +1,10 @@
+import array as a
+array1=a.array('i',[100,300,40,30,300,3,3,2])
+print(array1)
+array1.insert(4,100)
+array1.append(200)
+print(array1)
+count1=array1.count(3)
+print(count1)
+array1.reverse()
+print(array1)
