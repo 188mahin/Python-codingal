@@ -12,3 +12,4 @@ for i in range(10):
 #average score
 #student marks for loop for checking marks
 #print student name,average score,marks,medal
+#zip method
