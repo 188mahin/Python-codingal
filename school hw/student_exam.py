@@ -6,7 +6,7 @@ for i in range(10):
     marks=int(input("enter the amount of marks that student has scored:"))
     student_names.append(name)
     student_marks.append(marks)
-avg=sum(student_marks)/10
+avg=int(sum(student_marks)/10)
 avgL=[avg,avg,avg,avg,avg,avg,avg,avg,avg,avg]
 for i in student_marks:
     if i>=80:
