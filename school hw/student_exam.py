@@ -7,7 +7,7 @@ for i in range(10):
     student_names.append(name)
     student_marks.append(marks)
 avg=int(sum(student_marks)/10)
-avgL=[avg,avg,avg,avg,avg,avg,avg,avg,avg,avg]
+avgL=[avg]*10
 for i in student_marks:
     if i>=80:
         student_medals.append("gold medal")
@@ -22,8 +22,5 @@ for i in student_marks:
 print(list(zip(student_names,
                student_marks,
                student_medals,
-               avg)))
+               avgL)))
 
-    
-#print student name,average score,marks,medal
-#zip method
