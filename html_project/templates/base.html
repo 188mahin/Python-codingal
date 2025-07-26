@@ -1,0 +1,22 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html>
+<head><title>Medicine App</title></head>
+<body>
+<nav>
+    <a href="/">Home</a>
+    <a href="/order">Order</a>
+    <a href="/cart">Cart</a>
+    <a href="/checkout">Checkout</a>
+    {% if session.username %}
+        <span>Welcome, {{ session.username }}</span>
+        <a href="/signout">Sign Out</a>
+    {% else %}
+        <a href="/signin">Sign In</a>
+        <a href="/signup">Sign Up</a>
+    {% endif %}
+</nav>
+<hr>
+{% block content %}{% endblock %}
+</body>
+</html>
