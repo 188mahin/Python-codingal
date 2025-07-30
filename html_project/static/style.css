@@ -1,0 +1,126 @@
+/* General layout */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+}
+#mds{
+    background-color: rgb(34, 168, 0);
+    color: white;                      /* White text for contrast */
+    text-align: center;
+    padding: 20px 0;
+    margin: 0;
+    font-size: 3rem;
+    width: 100%;
+}
+
+/* Navbar */
+nav {
+    background-color: #0066cc;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Page container */
+.container {
+    max-width: 800px;
+    margin: auto;
+    background-color: #fff;
+    padding: 30px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    margin-top: 30px;
+}
+
+/* Form styling */
+form {
+    margin-top: 20px;
+}
+
+input[type="text"],
+input[type="password"],
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Buttons */
+button,
+input[type="submit"] {
+    background-color: #0066cc;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+button:hover,
+input[type="submit"]:hover {
+    background-color: #004d99;
+}
+
+/* Headers and text */
+h1, h2 {
+    text-align: center;
+    color: #333;
+}
+
+p {
+    color: #555;
+}
+
+ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+ul li {
+    background-color: #eef3f8;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+}
+
+/* Alert messages */
+.alert {
+    padding: 15px;
+    background-color: #ffdddd;
+    color: red;
+    margin-bottom: 20px;
+    border-left: 6px solid red;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 14px;
+    color: #aaa;
+}
+.centered-form {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+

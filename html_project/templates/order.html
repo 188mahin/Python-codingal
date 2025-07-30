@@ -1,27 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Medicine</title>
-</head>
-<body><nav> 
-    
-    <a href="/contact">Contact Us</a>
-    <a href="/">Home</a> |
-    <a href="/order">Order Medicine</a> |
-    <a href="/cart">Cart</a> |
-    <a href="/checkout">Checkout</a> |
-    <a href="/signout">Sign Out</a>
-</nav>
-    <h1>Order your Medicine</h1>
-    <form method="POST">
-        Name :<br><input type="text" name="name" required><br><br>
-        Adress :<br><textarea name="adress" required></textarea><br><br>
-        Medicine Name :<br><input type="text" name="medicine" required><br><br>
-        <button type="submit">Add to Cart</button>
+{% extends "base.html" %}
+{% block content %}
+<h2>Order Medicine</h2>
+<form method="POST" action="/order">
+    Name: <input type="text" name="name" required><br><br>
+    Address: <textarea name="address" required></textarea><br><br>
+    Medicine Name: <input type="text" name="medicine" required><br><br>
+    <button type="submit">Place Direct Order</button>
+</form>
 
-    </form>
-    
-</body>
-</html>
+<h3>Or Add to Cart</h3>
+<form method="POST" action="/add_to_cart">
+    Medicine Name: <input type="text" name="medicine" required>
+    <button type="submit">Add to Cart</button>
+</form>
+{% endblock %}

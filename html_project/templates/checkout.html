@@ -1,31 +1,19 @@
-<!-- checkout.html -->
-<!DOCTYPE html>
-<html>
-<head><title>Checkout</title></head>
-<body>
-<nav>
-    <a href="/">Home</a> |
-    <a href="/order">Order Medicine</a> |
-    <a href="/cart">Cart</a> |
-    <a href="/checkout">Checkout</a> |
-    <a href="/signout">Sign Out</a>
-</nav>
-
+{% extends "base.html" %}
+{% block content %}
 <h2>Checkout</h2>
 {% if cart %}
-    <p>You're ordering the following medicines:</p>
-    <ul>
+<p>You're ordering the following medicines:</p>
+<ul>
     {% for item in cart %}
         <li>{{ item }}</li>
     {% endfor %}
-    </ul>
-    <form method="POST">
-        Name: <input type="text" name="name" required><br><br>
-        Address: <textarea name="adress" required></textarea><br><br>
-        <button type="submit">Place Order</button>
-    </form>
+</ul>
+<form method="POST">
+    Name: <input type="text" name="name" required><br><br>
+    Address: <textarea name="address" required></textarea><br><br>
+    <button type="submit">Place Order</button>
+</form>
 {% else %}
-    <p>Your cart is empty. <a href="/order">Add some medicines</a>.</p>
+<p>Your cart is empty. <a href="/order">Add some medicines</a>.</p>
 {% endif %}
-</body>
-</html>
+{% endblock %}

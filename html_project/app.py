@@ -24,8 +24,9 @@ def signup():
         with open("users.txt", "a") as f:
             f.write(f"{username}|{password}\n")
 
-        session["username"] = username  # auto-login after signup
-        return redirect("/")  # go to home
+        session["username"] = username
+        session["cart"] = []
+        return redirect("/")
 
     return render_template("signup.html")
 
@@ -41,6 +42,7 @@ def signin():
                 existing_user, existing_pass = line.strip().split("|")
                 if existing_user == username and existing_pass == password:
                     session["username"] = username
+                    session["cart"] = []
                     return redirect("/")
         return "Invalid credentials. Try again."
 
@@ -50,13 +52,14 @@ def signin():
 @app.route("/signout")
 def signout():
     session.pop("username", None)
+    session.pop("cart", None)
     return redirect("/")
 
 
 @app.route("/")
 def home():
     if "username" not in session:
-        return redirect("/signin")  # block access until signed in
+        return redirect("/signin")
     return render_template("home.html")
 
 
@@ -67,26 +70,13 @@ def order():
 
     if request.method == "POST":
         name = request.form["name"]
-        address = request.form["adress"]
+        address = request.form["address"]
         medicine = request.form["medicine"]
         with open("orders.txt", "a") as f:
             f.write(f"{name} | {address} | {medicine}\n")
         return f"Thank you {name}, your medicine '{medicine}' will be delivered via drone"
+    
     return render_template("order.html")
-
-
-@app.route("/contact")
-def contact():
-    if "username" not in session:
-        return redirect("/signin")
-    return render_template("contact.html")
-@app.route("/cart")
-def cart():
-    if "username" not in session:
-        return redirect("/signin")
-
-    cart_items = session.get("cart", [])
-    return render_template("cart.html", cart=cart_items)
 
 
 @app.route("/add_to_cart", methods=["POST"])
@@ -96,18 +86,24 @@ def add_to_cart():
 
     medicine = request.form.get("medicine")
     if medicine:
-        if "cart" not in session:
-            session["cart"] = []
-        cart = session["cart"]
+        cart = session.get("cart", [])
         cart.append(medicine)
-        session["cart"] = cart  # update session
+        session["cart"] = cart
     return redirect("/cart")
 
 
+@app.route("/cart")
+def cart():
+    if "username" not in session:
+        return redirect("/signin")
+
+    cart_items = session.get("cart", [])
+    return render_template("cart.html", cart=cart_items)
 @app.route("/checkout", methods=["GET", "POST"])
 def checkout():
     if "username" not in session:
         return redirect("/signin")
+
     cart_items = session.get("cart", [])
     if request.method == "POST":
         name = request.form["name"]
@@ -115,10 +111,17 @@ def checkout():
         with open("orders.txt", "a") as f:
             for item in cart_items:
                 f.write(f"{name} | {address} | {item}\n")
-        session["cart"] = []  # empty cart after checkout
+        session["cart"] = []
         return f"Thank you {name}, your medicines will be delivered!"
 
     return render_template("checkout.html", cart=cart_items)
+
+
+@app.route("/contact")
+def contact():
+    if "username" not in session:
+        return redirect("/signin")
+    return render_template("contact.html")
 
 
 if __name__ == "__main__":
