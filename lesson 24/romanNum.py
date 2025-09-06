@@ -1,41 +1,20 @@
+class IntegertoRoman:
+    def __init__(self):
+        self.value_symbol_pairs=[
+            (1000,"M"),(900,"CM"),(500,"D"),(400,"CD"),
+            (100,"C"),(90,"XC"),(50,"L"),(40,"XL"),
+            (10,"X"),(9,"IX"),(5,"V"),(4,"IV"),(1,"I")
+            ]
+    def converter(self,num:int)->str:
+        roman=[]
+        for i,(value,symbols) in enumerate(self.value_symbol_pairs):
+            count=0
+            while num>=value:
+                roman.append(symbols)
+                num-=value
+                count+=1
+        return "".join(roman)
 
-romNum=input("enter a roman numeral:")
-realnum=0
-iterable=int(len(romNum))
-
-for i in range(iterable):
-    #for x in range(iterable):
-    b=[]
-    if romNum[i].lower()=="i":
-                b.append(1)
-    elif romNum[i].lower()=="v":
-                b.append(5)
-    elif romNum[i].lower()=="x":
-                b.append(10)
-    elif romNum[i].lower()=="l":
-                b.append(50)
-    elif romNum[i].lower()=="c":
-                b.append(100)   
-    elif romNum[i].lower()=="d":
-                b.append(500)
-    elif romNum[i].lower()=="m":
-                b.append(1000)                               
-    if romNum[i].lower()=="i":
-            realnum+=1
-    elif romNum[i].lower()=="v":
-            realnum+=5  
-    elif romNum[i].lower()=="x":
-            realnum+=10
-    elif romNum[i].lower()=="l":
-            realnum+=50
-    elif romNum[i].lower()=="c":
-            realnum+=100
-    elif romNum[i].lower()=="d":
-            realnum+=500
-    elif romNum[i].lower()=="m":
-            realnum+=1000
-    else:
-        print("your roman numeral has a mistake,try again")
-        
-print(realnum)
-print(b)
+romNum=int(input("enter a integer:"))
+convert=IntegertoRoman()
+print(convert.converter(romNum))
