@@ -51,7 +51,7 @@ def showScore(x,y):
     screen.blit(score,(x,y))
 def gameOverText():
     gametext=gameText.render("Game Over",True,(255,255,255))
-    screen.blit(gametext,(400,500))
+    screen.blit(gametext,(200,250))
 def player(x,y):
     screen.blit(playerimg,(x,y))
 def Enemy(x,y,i):
@@ -81,7 +81,7 @@ while running:
         if event.type==p.KEYUP and event.key in [p.K_LEFT,p.K_RIGHT]:
             playerX_change=0
     playerX+=playerX_change
-    playerX=max(0,min(PLAYER_X,SCREEN_WIDTH-64))
+    playerX=max(0,min(playerX,SCREEN_WIDTH-64))
     for i in range(enemyNum):
         if enemyY[i]>340:
             for j in range(enemyNum):
