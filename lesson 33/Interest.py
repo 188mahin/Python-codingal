@@ -1,0 +1,36 @@
+from tkinter import *
+root=Tk()
+root.title("Intrest Calculator")
+root.geometry("500x500")
+l1=Label(root,text='Enter the principal amount',bg='light blue')
+e1=Entry()
+l2=Label(root,text='Enter the rate of interest',bg='blue')
+e2=Entry()
+l3=Label(root,text='Enter the time period',bg='green')
+e3=Entry()
+l4=Label(root,text='Enter the the number of times interest is compounded in a year. ',bg='light green')
+e4=Entry()
+def interestcalculator():
+    amount=int(e1.get())
+    rate=int(e2.get())/100
+    time=int(e3.get())
+    noOfCompound=int(e4.get())
+    simpleInterest=amount*time*rate
+    compoundInterest=(amount*(1+(rate/noOfCompound))**(noOfCompound*time))
+    message=f"The Simple interest is {simpleInterest} . \n"
+    message2=f"The Compound interest is {compoundInterest} ."
+    text.insert(END,message)
+    text.insert(END,message2)
+text=Text(height=3)
+button=Button(root,text="calculate",bg="red",command=interestcalculator)
+l1.pack()
+e1.pack()
+l2.pack()
+e2.pack()
+l3.pack()
+e3.pack()
+l4.pack()
+e4.pack()
+text.pack()
+button.pack()
+root.mainloop()
