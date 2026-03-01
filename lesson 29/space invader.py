@@ -1,6 +1,7 @@
 import math as m
 import random as r
 import pygame as p
+
 SCREEN_WIDTH=800
 SCREEN_HEIGHT=500
 PLAYER_X=370
@@ -62,6 +63,7 @@ def fire_bullet(x,y):
     screen.blit(bulletimg,(x+16,y+10))
 def isCollision(enemyX,enemyY,bulletX,bulletY):
     distance=m.sqrt((enemyX-bulletX)**2+(enemyY-bulletY)**2)
+
     return distance<COLLISION_DISTANCE
 running=True
 while running:
