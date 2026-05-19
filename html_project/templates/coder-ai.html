@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ CodeAI Studio</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <style>
+        /* Custom scrollbar for an IDE feel */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #1e1e2e; }
+        ::-webkit-scrollbar-thumb { background: #313244; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #45475a; }
+        .prose pre { background-color: #11111b !important; padding: 1rem; border-radius: 0.5rem; border: 1px solid #313244; overflow-x: auto; }
+        .prose code { font-family: 'Fira Code', monospace; color: #f38ba8; }
+    </style>
+</head>
+<body class="bg-[#11111b] text-[#cdd6f4] h-screen flex flex-col font-sans">
+
+    <header class="bg-[#181825] border-b border-[#313244] px-6 py-4 flex justify-between items-center shrink-0">
+        <div class="flex items-center gap-3">
+            <i class="fa-solid xfa-code-terminal text-2xl text-[#cba6f7]"></i>
+            <h1 class="text-xl font-bold tracking-tight text-[#f5e0dc]">CodeAI <span class="text-[#cba6f7] font-mono text-sm">v1.0</span></h1>
+        </div>
+        
+        <div class="flex items-center gap-4 bg-[#1e1e2e] p-2 rounded-lg border border-[#313244]">
+            <div class="flex flex-col">
+                <label class="text-[10px] text-[#a6adc8] font-bold uppercase tracking-wider">Provider</label>
+                <select id="provider" class="bg-transparent text-sm font-semibold text-[#cdd6f4] focus:outline-none cursor-pointer" onchange="toggleApiKeyInput()">
+                    <option value="ollama">Ollama (Local)</option>
+                    <option value="openai">OpenAI (Cloud)</option>
+                </select>
+            </div>
+            <div id="key-container" class="hidden flex-col border-l border-[#313244] pl-4">
+                <label class="text-[10px] text-[#a6adc8] font-bold uppercase tracking-wider">API Key</label>
+                <input type="password" id="api-key" placeholder="sk-..." class="bg-transparent text-sm text-[#cdd6f4] focus:outline-none w-48">
+            </div>
+            <div class="flex flex-col border-l border-[#313244] pl-4">
+                <label class="text-[10px] text-[#a6adc8] font-bold uppercase tracking-wider">Model</label>
+                <input type="text" id="model-name" value="codellama" class="bg-transparent text-sm font-mono text-[#cba6f7] focus:outline-none w-28">
+            </div>
+        </div>
+    </header>
+
+    <main id="chat-window" class="flex-grow overflow-y-auto p-6 space-y-6 max-w-5xl w-full mx-auto">
+        <div class="flex gap-4 items-start message-block">
+            <div class="w-8 h-8 rounded-lg bg-[#cba6f7] flex items-center justify-center shrink-0 text-[#11111b] font-bold">
+                <i class="fa-solid fa-robot"></i>
+            </div>
+            <div class="space-y-2 bg-[#181825] p-4 rounded-xl border border-[#313244] w-full shadow-lg">
+                <p class="font-semibold text-[#cba6f7]">System Assistant</p>
+                <div class="prose text-[#cdd6f4] max-w-none text-sm leading-relaxed">
+                    Hello! I am your isolated web-based coding companion. Paste your code snippet, request an algorithm, or ask me to debug an error. 
+                    <br><br>
+                    <span class="text-[#a6adc8] italic">Note: If using **Ollama**, ensure it is running locally and CORS is enabled via terminal (`OLLAMA_ORIGINS="*" ollama serve`).</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-[#181825] border-t border-[#313244] p-4 shrink-0">
+        <div class="max-w-5xl w-full mx-auto flex gap-4 items-end bg-[#1e1e2e] p-3 rounded-xl border border-[#313244] focus-within:border-[#cba6f7] transition-all">
+            <textarea id="user-input" rows="3" placeholder="Ask for code, refactoring, or bug fixes..." class="w-full bg-transparent text-[#cdd6f4] focus:outline-none resize-none font-sans text-sm placeholder-[#x585b70] leading-relaxed"></textarea>
+            <button onclick="handleGeneration()" id="send-btn" class="bg-[#cba6f7] text-[#11111b] h-10 w-10 rounded-lg flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95 transition-all shadow-md shrink-0">
+                <i class="fa-solid fa-paper-plane text-sm"></i>
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        // Adjust model input defaults depending on selected platform
+        function toggleApiKeyInput() {
+            const provider = document.getElementById('provider').value;
+            const keyContainer = document.getElementById('key-container');
+            const modelInput = document.getElementById('model-name');
+            
+            if (provider === 'openai') {
+                keyContainer.classList.remove('hidden');
+                modelInput.value = 'gpt-4o-mini';
+            } else {
+                keyContainer.classList.add('hidden');
+                modelInput.value = 'codellama';
+            }
+        }
+
+        async function handleGeneration() {
+            const inputField = document.getElementById('user-input');
+            const chatWindow = document.getElementById('chat-window');
+            const provider = document.getElementById('provider').value;
+            const apiKey = document.getElementById('api-key').value;
+            const model = document.getElementById('model-name').value;
+            const prompt = inputField.value.trim();
+
+            if (!prompt) return;
+
+            // Render User Query UI Block
+            const userHTML = `
+                <div class="flex gap-4 items-start justify-end message-block">
+                    <div class="space-y-2 bg-[#313244] p-4 rounded-xl border border-[#45475a] max-w-3xl shadow-lg">
+                        <p class="font-semibold text-[#89b4fa] text-right text-xs uppercase tracking-wider">You</p>
+                        <div class="text-[#cdd6f4] text-sm whitespace-pre-wrap">${escapeHtml(prompt)}</div>
+                    </div>
+                    <div class="w-8 h-8 rounded-lg bg-[#89b4fa] flex items-center justify-center shrink-0 text-[#11111b] font-bold">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                </div>`;
+            chatWindow.insertAdjacentHTML('beforeend', userHTML);
+            inputField.value = '';
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+
+            // Generate AI UI Placeholder
+            const aiResponseId = 'ai-' + Date.now();
+            const aiPlaceholderHTML = `
+                <div class="flex gap-4 items-start message-block">
+                    <div class="w-8 h-8 rounded-lg bg-[#cba6f7] flex items-center justify-center shrink-0 text-[#11111b] font-bold">
+                        <i class="fa-solid fa-microchip animate-pulse"></i>
+                    </div>
+                    <div class="space-y-2 bg-[#181825] p-4 rounded-xl border border-[#313244] w-full shadow-lg">
+                        <p class="font-semibold text-[#cba6f7] text-xs uppercase tracking-wider">CodeAI Engine</p>
+                        <div id="${aiResponseId}" class="prose text-[#cdd6f4] max-w-none text-sm leading-relaxed font-mono">Thinking...</div>
+                    </div>
+                </div>`;
+            chatWindow.insertAdjacentHTML('beforeend', aiPlaceholderHTML);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+
+            const responseBox = document.getElementById(aiResponseId);
+
+            // API Routing Configurations
+            let targetUrl = "http://localhost:11434/api/generate";
+            let headers = { "Content-Type": "application/json" };
+            let bodyPayload = {};
+
+            const systemInstruction = "You are a specialized software engineering AI. Deliver clean, highly optimized code blocks matching industry best practices accompanied by explicit architectural remarks.";
+
+            if (provider === 'ollama') {
+                bodyPayload = {
+                    model: model,
+                    prompt: `${systemInstruction}\n\nUser: ${prompt}\nAI:`,
+                    stream: false
+                };
+            } else if (provider === 'openai') {
+                targetUrl = "https://api.openai.com/v1/chat/completions";
+                headers["Authorization"] = `Bearer ${apiKey}`;
+                bodyPayload = {
+                    model: model,
+                    messages: [
+                        { role: "system", content: systemInstruction },
+                        { role: "user", content: prompt }
+                    ]
+                };
+            }
+
+            try {
+                const networkResponse = await fetch(targetUrl, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(bodyPayload)
+                });
+
+                if (!networkResponse.ok) throw new Error(`HTTP Error Status: ${networkResponse.status}`);
+                const data = await networkResponse.json();
+                
+                // Parse distinct response formats
+                let rawMarkdown = "";
+                if (provider === 'ollama') {
+                    rawMarkdown = data.response;
+                } else if (provider === 'openai') {
+                    rawMarkdown = data.choices[0].message.content;
+                }
+
+                // Compile Markdown down to valid HTML and highlight the structural code
+                responseBox.innerHTML = marked.parse(rawMarkdown);
+                responseBox.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
+
+            } catch (err) {
+                responseBox.innerHTML = `<span class="text-[#f38ba8]"><i class="fa-solid fa-triangle-exclamation mr-2"></i>Failed to establish communication line. Verify your local endpoint routing or API credentials.</span>`;
+                console.error(err);
+            }
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        // Support CMD/Ctrl + Enter submission mechanics
+        document.getElementById('user-input').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault();
+                handleGeneration();
+            }
+        });
+    </script>
+</body>
+</html>
